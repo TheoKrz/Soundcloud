@@ -34,7 +34,7 @@ class SoundCloudModel extends WidgetModel {
 
 }
 
-class LeMondeView extends WidgetView {
+class SoundCloudView extends WidgetView {
 	
 	constructor() {
 		super();
@@ -54,12 +54,12 @@ class LeMondeView extends WidgetView {
 	
 	update(title, link) {
 		this.link.innerHTML = title;
-		HH.attr(this.link, {"href": "https://www.lemonde.fr" + link, "target": "_blank"});
+		HH.attr(this.link, {"href": "https://soundcloud.com" + link, "target": "_blank"});
 	}
 	
 }
 
-class LeMondeController extends WidgetController {
+class SoundCloudController extends WidgetController {
 	
 	constructor() {
 		super();
@@ -71,7 +71,7 @@ class LeMondeController extends WidgetController {
 	}
 	
 	async load() {
-		let result = await this.mvc.main.dom("https://lemonde.fr"); // load web page
+		let result = await this.mvc.main.dom("https://soundcloud.com"); // load web page
 		let domstr = _atob(result.response.dom); // decode result
 		let parser = new DOMParser(); // init dom parser
 		let dom = parser.parseFromString(domstr, "text/html"); // inject result
