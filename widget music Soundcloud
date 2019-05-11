@@ -23,16 +23,42 @@ class SoundCloudWidget extends Widget {
 
 class SoundCloudModel extends WidgetModel {
 	
-	constructor() {
-		super();
-	}
-	
-	setUp() {
-		super.setUp();
-		
-	}
+	constructor() { private final String ACTION_WIDGET_PLAY = "PlaySong";
+    private final String ACTION_WIDGET_PAUSE = "PauseSong";
+    private final String ACTION_WIDGET_STOP = "StopSong";   
+    private final int INTENT_FLAGS = 0;
+    private final int REQUEST_CODE = 0;
 
-}
+    @Override
+    public void onUpdate(Context context, AppWidgetManager appWidgetManager,
+            int[] appWidgetIds) {
+
+        RemoteViews controlButtons = new RemoteViews(context.getPackageName(),
+                R.layout.main);
+
+        Intent playIntent = new Intent(this, BackgroundSoundService.class);
+
+        Intent pauseIntent = new Intent(this, BackgroundSoundService.class);
+
+        Intent stopIntent = new Intent(this, BackgroundSoundService.class);
+
+
+        PendingIntent playPendingIntent = PendingIntent.getService(
+                this, REQUEST_CODE, playIntent, INTENT_FLAGS);
+        PendingIntent pausePendingIntent = PendingIntent.getService(
+                this, REQUEST_CODE, pauseIntent, INTENT_FLAGS);
+        PendingIntent stopPendingIntent = PendingIntent.getService(
+                this, REQUEST_CODE, stopIntent, INTENT_FLAGS);
+
+        controlButtons.setOnClickPendingIntent(
+                R.id.btnPlay, playPendingIntent);
+        controlButtons.setOnClickPendingIntent(
+                R.id.btnPause, pausePendingIntent);
+        controlButtons.setOnClickPendingIntent(
+                R.id.btnStop, stopPendingIntent);
+
+        appWidgetManager.updateAppWidget(appWidgetIds, controlButtons);         
+    }
 
 class SoundCloudView extends WidgetView {
 	
@@ -61,14 +87,46 @@ class SoundCloudView extends WidgetView {
 
 class SoundCloudController extends WidgetController {
 	
-	constructor() {
-		super();
+constructor() {private static final String TAG = null;
+   
+	super(MediaPlayer player);
 	}
-	
-	setUp() {
-		super.setUp();
-		
-	}
+    public IBinder onBind(Intent arg0) {
+
+        return null;
+    }
+    @Override
+    setUp() { 
+        super.setup();
+        player = MediaPlayer.create(this, R.raw.trck);
+       //configure other settings    
+    }
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        player.start();
+        return 1;
+    }
+
+    public void onStart(Intent intent, int startId) {
+        // TO DO
+    }
+    public IBinder onUnBind(Intent arg0) {
+        // TO DO Auto-generated method
+        return null;
+    }
+
+    public void onStop() {
+
+    }
+    public void onPause() {
+
+    }
+    @Override
+    public void onDestroy() {
+        player.stop();
+        player.release();
+    }
+
+ }
 	
 	async load() {
 		let result = await this.mvc.main.dom("https://soundcloud.com"); // load web page
